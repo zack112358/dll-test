@@ -13,9 +13,7 @@
 *.dylib
 
 # Executables
-*.exe
-*.out
-*.app
+dll-test
 
 # Tup
 .tup
