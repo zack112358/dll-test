@@ -20,12 +20,14 @@ typedef struct {
 
 int main(int argc, char **argv) {
     FILE *testfile = fopen("dll-test.in", "r");
+    assert(testfile);
 
     int n_nodes;
-    assert(fscanf(testfile, "n_nodes:%d", &n_nodes) == 1);
+    assert(fscanf(testfile, "n_nodes:%d\n", &n_nodes) == 1);
 
     node_t *nodes_a = malloc(sizeof(node_t) * n_nodes);
     assert(nodes_a);
+
     for (int i = 0; i < n_nodes; ++i) {
         nodes_a[i].value = i;
         for (int j = 0; j < N_LISTS; ++j) {
@@ -35,12 +37,14 @@ int main(int argc, char **argv) {
 
     dll_root_t *lists_a = malloc(sizeof(dll_root_t) * N_LISTS);
     assert (lists_a);
+
     for (int i = 0; i < N_LISTS; ++i) {
         dll_init_root(&lists_a[i]);
     }
 
     char line[LINE_LEN];
 
+    int n_ops = 0;
     while (fgets(line, LINE_LEN, testfile)) {
         int list_idx = 0;
         int node_idx = 0;
@@ -77,10 +81,10 @@ int main(int argc, char **argv) {
         } else if (sscanf(line, "tail %d -> %d", &list_idx, &result_idx) == 2) {
             CONV();
             assert(dll_tail(offset, list_p) == result_p);
-        } else if (sscanf(line, "next %d -> %d", &node_idx, &result_idx) == 2) {
+        } else if (sscanf(line, "next %d %d -> %d", &list_idx, &node_idx, &result_idx) == 3) {
             CONV();
             assert(dll_next(offset, node_p) == result_p);
-        } else if (sscanf(line, "prev %d -> %d", &node_idx, &result_idx) == 2) {
+        } else if (sscanf(line, "prev %d %d -> %d", &list_idx, &node_idx, &result_idx) == 3) {
             CONV();
             assert(dll_prev(offset, node_p) == result_p);
         } else if (sscanf(line, "ins_after %d %d %d",
@@ -90,6 +94,7 @@ int main(int argc, char **argv) {
         } else if (sscanf(line, "ins_before %d %d %d",
                    &list_idx, &node_idx, &node_b_idx) == 3) {
             CONV();
+            fprintf(stderr, "yo:\noffset %ld\nlist_p %p\n*list_p %p\nnode_p %p\nnode_b_p %p\n", offset, list_p, *list_p, node_p, node_b_p);
             dll_ins_before(offset, list_p, node_p, node_b_p);
         } else if (sscanf(line, "remove %d %d", &list_idx, &node_idx) == 2) {
             CONV();
@@ -97,5 +102,10 @@ int main(int argc, char **argv) {
         } else {
             assert(!"Couldn't parse line");
         }
+
+        ++n_ops;
+        fprintf(stderr, "\rLine %d     ", n_ops + 2);
     }
+
+    printf("Success: %d ops performed\n", n_ops);
 }
