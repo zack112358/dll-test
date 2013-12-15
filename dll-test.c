@@ -94,7 +94,6 @@ int main(int argc, char **argv) {
         } else if (sscanf(line, "ins_before %d %d %d",
                    &list_idx, &node_idx, &node_b_idx) == 3) {
             CONV();
-            fprintf(stderr, "yo:\noffset %ld\nlist_p %p\n*list_p %p\nnode_p %p\nnode_b_p %p\n", offset, list_p, *list_p, node_p, node_b_p);
             dll_ins_before(offset, list_p, node_p, node_b_p);
         } else if (sscanf(line, "remove %d %d", &list_idx, &node_idx) == 2) {
             CONV();
