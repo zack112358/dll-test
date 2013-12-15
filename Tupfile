@@ -1,4 +1,3 @@
-CC = gcc
-CFLAGS = -Wall -Werror -O3 
-: foreach *.c |> $(CC) $(CFLAGS) -c %f -o %o |> %B.o
-: *.o dll/dll.o |> $(CC) $(CFLAGS) %f -o %o |> dll-test
+include_rules
+: foreach *.c |> !cco |>
+: *.o dll/dll.o |> !cc |> dll-test
